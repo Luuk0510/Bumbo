@@ -1,0 +1,81 @@
+# Visual Studio / Rider / ReSharper
+.vscode/
+.vs/
+.idea/
+_ReSharper*/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Ll][Oo][Gg][Ss]/
+[Ll][Ii][Bb]/
+[Nn][Uu][Pp][Kk][Gg][Rr][Aa][Dd][Ee]/
+[Dd]ebugPublic/
+
+# Visual Studio user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/dictionaries
+
+# Mono Auto Generated Files
+mono_crash.*
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# JetBrains Rider
+.idea/inspectionProfiles/Project_Default.xml
+
+# Ignore JSON files
+*.json
+
+# NuGet
+nuget.config
+*.nuget.targets
+
+# Bumbo-specific exclusions
+Bumbo/obj/
+Bumbo/Properties/launchSettings.json
+Bumbo/Bumbo.csproj
+*.json
+*.props
+*.json
+*.cache
+*.json
+*.props
+*.json
+*.cache
