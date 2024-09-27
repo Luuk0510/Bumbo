@@ -1,0 +1,64 @@
+﻿@using System.Globalization
+@model Bumbo.ViewModels.MaandUrenRegistratieJaarViewModel
+
+@{
+    ViewData["Title"] = "Maand overzicht";
+    int currentYear = DateTime.Now.Year;
+    var dutchCultureInfo = new CultureInfo("nl-NL");
+}
+
+@if (TempData["TempData"] != null)
+{
+    <div class="container w-50 mx-auto">
+        <div class="alert alert-info alert-dismissible fade show fs-5 text-center shadow" role="alert">
+            @Html.Raw(TempData["TempData"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<div class="row align-items-center">
+    <div class="col text-center">
+        <a class="btn btn-primary btn-lg" asp-area="" asp-controller="MaandUrenRegistratie" asp-action="Index" asp-route-year="@(@Model.Year - 1)">Vorig jaar</a>
+    </div>
+    <div class="col text-center">
+        <h1>@Model.Year</h1>
+        @if (currentYear == Model.Year)
+        {
+            <h2>Huidig ​​maand : @dutchCultureInfo.DateTimeFormat.GetMonthName(@Model.CurrentMonth)</h2>
+        }
+    </div>
+    <div class="col text-center">
+        <a class="btn btn-primary btn-lg" asp-area="" asp-controller="MaandUrenRegistratie" asp-action="Index" asp-route-year="@(@Model.Year + 1)">Volgend jaar</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-4 g-6">
+        @foreach (var month in Model.Months)
+        {
+            string? style = null;
+            if (month.isComplete && month.Month <= Model.CurrentMonth && Model.Year == currentYear)
+            {
+                style = "success";
+            }
+            else if (month.Month == Model.CurrentMonth && Model.Year == currentYear)
+            {
+                style = "warning";
+            } 
+            else
+            {
+                style = "light";
+            }
+            <div class="col p-2">
+                <div class="card">
+                    <a class="btn btn-@style" asp-controller="MaandUrenRegistratie" asp-action="Register" asp-route-monthNumber="@month.Month" asp-route-year="@Model.Year">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">@dutchCultureInfo.DateTimeFormat.GetMonthName(@month.Month)</h4>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

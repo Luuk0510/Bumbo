@@ -1,0 +1,153 @@
+﻿@model Bumbo.ViewModels.RegisterViewModel
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (element) {
+            return new bootstrap.Tooltip(element, {
+                delay: { show: 1000, hide: 0 } // Hier kun je de gewenste vertraging instellen in milliseconden
+            });
+        });
+    });
+</script>
+
+<div class="text-center">
+    <h1>Week @Model.WeekNumber</h1>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <!-- Terug button links -->
+        <div class="col-3 d-flex justify-content-start">
+            <a class="btn btn-secondary asp-controller="WeekUrenRegistratie" asp-action="Index" asp-route-weekNumber="@Model.WeekNumber"
+               asp-route-year="@Model.Year">Terug</a>
+        </div>
+        <!-- Weeknavigatie in het midden -->
+        <div class="col-6 d-flex justify-content-center">
+            <a href="@Model.PreviousWeekUrl" class="btn btn-outline-secondary me-3 border-2 p-2 pe-3">Vorige week</a>
+            <span class="fs-4">@Model.CurrentDay.ToString("dddd dd MMMM")</span>
+            <a href="@Model.NextWeekUrl" class="btn btn-outline-secondary ms-3 border-2 p-2 ">Volgende week</a>
+        </div>
+        <!-- Afdeling knoppen rechts -->
+        <div class="col-3 d-flex justify-content-end">
+            <div class="navbar-nav">
+                <span class="nav-item nav-link">Afdeling:</span>
+                @foreach (var afdelingNamen in Model.AfdelingNamen)
+                {
+                    <form method="get" asp-controller="WeekUrenRegistratie" asp-action="Register">
+                        <input type="hidden" name="weekNumber" value="@Model.WeekNumber" />
+                        <input type="hidden" name="year" value="@Model.Year" />
+                        <input type="hidden" name="dayName" value="@Model.CurrentDayName" />
+                        <button class="btn mx-1 @(afdelingNamen == Context.Request.Query["selectedAfdeling"] ? "btn-primary active" : "btn-light")" type="submit" name="selectedAfdeling" value="@afdelingNamen">@afdelingNamen</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-md-12 text-center">
+            <div class="btn-group mt-4" role="group" aria-label="Days of the Week">
+                @foreach (var day in Model.DayOptions)
+                {
+                    var dayValue = Model.ButtonStatuses.ContainsKey(day.Key) ? Model.ButtonStatuses[day.Key] : false;
+                    var bgClass = dayValue ? "bg-success text-white" : "bg-danger text-white";
+
+                    <a asp-controller="WeekUrenRegistratie"
+                       asp-action="Register"
+                       asp-route-weekNumber="@Model.WeekNumber"
+                       asp-route-year="@Model.Year"
+                       asp-route-dayName="@day.Key.ToString("dddd")">
+                        <button type="submit" class="btn order border-3 me-2 btn-lg p-1 pe-5 day-button rounded @(dayValue ? "border-success" : "border-danger") @(day.Key == Model.CurrentDay ? bgClass : "")">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="text-truncate day-name fs-4">@day.Key.ToString("dddd")</div>
+                                </div>
+                            </div>
+                        </button>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered text-lg">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Naam</th>
+                        <th>Gepland</th>
+                        <th>Geklokt</th>
+                        <th>Pauze</th>
+                        <th>0%</th>         
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" title="Toeslag: Gewerkt tussen 20.00 en 21.00 uur">
+                            <span class="me-1">33.33%</span>
+                            <i class="bi bi-info-circle fs-6"></i>
+                        </th>
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" title="Toeslag: Gewerkt tussen 00.00 en 06.00 of tussen 21.00 en 24.00 of op zaterdag tussen 18.00 en 24.00">
+                            <span class="me-1">50%</span>
+                            <i class="bi bi-info-circle fs-6"></i>
+                        </th>
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" title="Toeslag: Ziekte uren">
+                            <span class="me-1">70%</span>
+                            <i class="bi bi-info-circle fs-6"></i>
+                        </th>
+                        <th class="border-end-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Toeslag: Gewerkt op zon- of feestdagen ">
+                            <span class="me-1">100%</span>
+                            <i class="bi bi-info-circle fs-6"></i>
+                        </th>
+                        <th class="border-end-0"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.DienstenViewModel)
+                    {
+
+
+
+                        <tr>
+                            <td>@item.MedewerkerNaam</td>
+                            <td>@item.DienstTijden</td>
+                            <td class="@(item.IsApproved ? "text-black" : (item.HasDeviation ? "text-danger" : ""))">@item.InklokTijden</td>
+                            <td>@item.Pauze minuten</td>
+                            <td>@item.Toeslag_0</td>
+                            <td>@item.Toeslag_33</td>
+                            <td>@item.Toeslag_50</td>
+                            <td>@item.UrenZiek</td>
+                            <td>@item.Toeslag_100</td>
+                            <td class="border-end-0">
+                                <form method="post" asp-controller="WeekUrenRegistratie" asp-action="ToggleApproval" asp-route-weekNumber="@Model.WeekNumber"
+                                      asp-route-year="@Model.Year"
+                                      asp-route-dayName="@Model.CurrentDay.ToString("dddd")" class="d-inline">
+                                    <input type="hidden" name="dienstId" value="@item.DienstId" />
+                                    <button type="submit" class="btn btn-sm @(item.IsApproved ? "btn-success" : "btn-outline-success")">
+                                        <i class="bi bi-check2 fs-9"></i>
+                                    </button>
+                                </form>
+                                <div class="float-end me-1">
+                                    <a asp-controller="WeekUrenRegistratie" asp-action="RegisterChange"
+                                       - asp-route-dienstId="@item.DienstId" asp-route-week="@Model.WeekNumber"
+                                       asp-route-year="@Model.Year" asp-route-frompage="Week"
+                                       class="btn btn-sm btn-outline-dark border border-dark">
+                                        Aanpassen
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

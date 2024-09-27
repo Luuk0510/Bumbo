@@ -1,0 +1,51 @@
+﻿@model Bumbo.ViewModels.PrognoseFormViewModel
+
+<h4>Prognose week @Model.WeekNumber</h4>
+
+<hr />
+<form asp-action="PrognoseUpdateForm" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        @for (int i = 0; i < Model.PrognosesList.Count; i++)
+        {
+            <div class="form-group col-md-1">
+                <br>
+                <p><b> @Model.Date.AddDays(i).ToString("dddd", @Model.Culture) </b></p>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="PrognosesList[i].PotentieleAantalBezoekers" class="control-label">PotentieleAantalBezoekers</label>
+                    <input asp-for="PrognosesList[i].PotentieleAantalBezoekers" class="form-control" placeholder="PotentieleAantalBezoekers" />
+                    <span asp-validation-for="PrognosesList[i].PotentieleAantalBezoekers" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="PrognosesList[i].AantalCollies" class="control-label">AantalCollies</label>
+                    <input asp-for="PrognosesList[i].AantalCollies" class="form-control" placeholder="AantalCollies" />
+                    <span asp-validation-for="PrognosesList[i].AantalCollies" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    <input asp-for="PrognosesList[i].Vakantiedag" class="form-check-input" type="checkbox" />
+                    <label class="form-check-label">Feestdag</label>
+                </div>
+            </div>
+            <br />
+        }
+        <div class="form-group col-md-12">
+            <input type="submit" value="Update prognose" class="btn btn-primary" asp-route-weekNumber="@Model.WeekNumber" asp-route-year="@Model.Year" />
+        </div>
+    </div>
+</form>
+
+<div class="pt-4">
+    <a class="btn btn-outline-primary btn-sm" asp-action="PrognoseWeekOverview" asp-route-weekNumber="@Model.WeekNumber" asp-route-year="@Model.Year">Ga terug</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

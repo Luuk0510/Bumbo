@@ -1,0 +1,76 @@
+﻿@model Bumbo.ViewModels.UrenOverzichtMedewerkerViewModel
+@{
+    ViewData["Title"] = "Uren Overzicht";
+    Layout = "_MedewerkerLayout";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h1 class="text-center mb-4">Uren Overzicht</h1>
+            <nav aria-label="Week navigation">
+                <ul class="pagination justify-content-center mb-4">
+                    <li class="page-item">
+                        <a href="@Url.Action("Index", "UrenOverzichtMedewerker", new { year = Model.Year, weekNumber = Model.previousWeek })" class="page-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                            </svg>
+                        </a>
+                    </li>
+
+                    <li class="page-item">
+                        <span class="page-link">Week @(Model.WeekNumber + " " + Model.Year)</span>
+                    </li>
+                    <li class="page-item">
+                        <a href="@Url.Action("Index", "UrenOverzichtMedewerker", new { year = Model.Year, weekNumber = Model.nextWeek })" class="page-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            @foreach (var dayGroup in Model.diensten.GroupBy(d => d.Datum.Date))
+            {
+                <div class="card mb-3 mx-auto w-75">
+                    <div class="card-header text-center">
+                        @(dayGroup.Key.ToString("dddd d MMMM"))
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Dienst</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Diensten dienst in dayGroup.Where(d => d.Datum.Date >= Model.FirstDayOfSelectedWeek && d.Datum.Date <= Model.LastDayOfSelectedWeek))
+                                    {
+                                        var textColor = Model.textColors[Model.diensten.IndexOf(dienst)];
+
+                                        <tr>
+                                            <td>Afdeling: @Model.departmentName</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gepland: @(dienst.StartTijd.ToString("hh\\:mm") + " - " + dienst.EindTijd.ToString("hh\\:mm"))</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Geregistreerd: <span class="@textColor">@Model.registeredStartTime?.ToString("HH\\:mm") - @Model.registeredEndTime?.ToString("HH\\:mm")</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pauze: @(Model.breakTime + " minuten")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

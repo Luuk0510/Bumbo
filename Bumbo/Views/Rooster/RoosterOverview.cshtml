@@ -1,0 +1,80 @@
+﻿@model Bumbo.ViewModels.RoosterOverviewViewModel
+
+@{
+    ViewData["Title"] = "RoosterOverview";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy6TJ0XnR+OOLfxz1iQ5wEi5nX23l5yR5a" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Week @Model.WeekNumber</h2>
+
+        <div class="rooster-header mb-4 d-flex flex-row">
+            <div class="header-part">
+                <a href="@Url.Action("RoosterCreate", "Rooster", new { year = Model.year, weekNumber = Model.WeekNumber })" class="btn btn-secondary">Terug</a>
+            </div>
+            <div class="header-part">
+                <form method="post" class="form-inline">
+                    <label class="mr-2" for="SelectedDate">Datum:</label>
+                    <div class="input-group">
+                        <select asp-for="SelectedDate" asp-items="Model.DayOptions" class="form-control col-auto" style="width: 150px;"></select>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        @foreach (var afdeling in Model.Afdelingen)
+                        {
+                            <th colspan="3" class="text-center">@($"{afdeling.Naam}")</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 7; i <= 21; i++)
+                    {
+                        <tr>
+                            <td class="time-cell">@i:00</td>
+                            @foreach (var afdeling in Model.Afdelingen)
+                            {
+                                var dienstenForCurrentHour = Model.Diensten.Where(d => d.StartTijd.Hours <= i &&
+                                d.EindTijd.Hours >= i &&
+                                d.AfdelingId == afdeling.AfdelingId);
+
+                                <td colspan="3" class="text-center">
+                                    @foreach (var dienst in dienstenForCurrentHour)
+                                    {
+                                        <ul class="list-unstyled">
+                                            <li>@($"{dienst.Medewerker.Voornaam} {dienst.Medewerker.Tussenvoegsel} {dienst.Medewerker.Achternaam}".Trim())</li>
+                                        </ul>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy6TJ0XnR+OOLfxz1iQ5wEi5nX23l5yR5a" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+﻿@model Bumbo.ViewModels.UrenWijzigenViewModel
+
+<div class="container mt-3">
+    <!-- Back Button -->
+    <div class="row mb-3">
+        <div class="col">
+            <form asp-controller="WeekUrenRegistratie" asp-action="BackButton" method="get">
+                <input type="hidden" asp-for="Dienst_Id" />
+                <input type="hidden" asp-for="Year" />
+                <input type="hidden" asp-for="Week" />
+                <input type="hidden" asp-for="DayName" />
+                <input type="hidden" asp-for="FromPage" />
+                <button type="submit" class="btn btn-outline-secondary">Terug</button>
+            </form>
+        </div>
+
+    </div>
+
+
+    <!-- Date and Name -->
+    <div class="row mb-2 justify-content-center text-center">
+        <div class="col-12">
+            <h1 class="font-weight-bold">@Model.Date</h1>
+            <h4>@Model.Name</h4>
+        </div>
+    </div>
+
+    <form asp-action="RegisterChange" method="post">
+        <hr />
+        <!-- Scheduled, Clocked, and Break in the center -->
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <label>Gepland:</label>
+                <p>@Model.ScheduledStart.ToString(@"hh\:mm") - @Model.ScheduledEnd.ToString(@"hh\:mm")</p>
+            </div>
+            <div class="col-auto">
+                <label>Geklokt:</label>
+                <div class="row justify-content-center">
+                    <div class="col-auto">
+                        <p style="color: @(Math.Abs((Model.ActualStart - Model.ScheduledStart).TotalMinutes) > 10 ? "red" : "black"); display: inline;">
+                            @Model.ActualStart.ToString(@"hh\:mm")
+                        </p>
+                        <span> - </span>
+                        <p style="color: @(Math.Abs((Model.ActualEnd - Model.ScheduledEnd).TotalMinutes) > 10 ? "red" : "black"); display: inline;">
+                            @Model.ActualEnd.ToString(@"hh\:mm")
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-auto">
+                <label>Pauze:</label>
+                <p>@(Model.BreakLength.TotalMinutes) minuten</p>
+            </div>
+        </div>
+
+        <input type="hidden" asp-for="Dienst_Id" />
+        <input type="hidden" asp-for="Year" />
+        <input type="hidden" asp-for="Week" />
+        <input type="hidden" asp-for="Date" />
+        <input type="hidden" asp-for="Name" />
+        <input type="hidden" asp-for="DayName" />
+        <input type="hidden" asp-for="FromPage" />
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <hr style="border-top: 1px solid black;">
+            </div>
+        </div>
+
+
+        <!-- Clocked In -->
+        <div class="form-group row justify-content-center">
+            <div class="col-auto">
+                <label for="actualStart">Ingeklokt:</label>
+                <input type="time" id="actualStart" asp-for="ActualStart" class="form-control" />
+            </div>
+        </div>
+
+        <!-- Breaks -->
+        <!-- Pause 1 -->
+        <div class="form-group row justify-content-center">
+            <div class="col-auto">
+                <label>Pauze 1 Start:</label>
+                <input type="time" asp-for="PauseStart1" class="form-control" value="@Model.PauseStart1?.ToString("HH:mm")" />
+            </div>
+            <div class="col-auto">
+                <label>Pauze 1 Einde:</label>
+                <input type="time" asp-for="PauseEnd1" class="form-control" value="@Model.PauseEnd1?.ToString("HH:mm")" />
+            </div>
+        </div>
+
+        <!-- Pause 2 -->
+        <div class="form-group row justify-content-center">
+            <div class="col-auto">
+                <label>Pauze 2 Start:</label>
+                <input type="time" asp-for="PauseStart2" class="form-control" value="@Model.PauseStart2?.ToString("HH:mm")" />
+            </div>
+            <div class="col-auto">
+                <label>Pauze 2 Einde:</label>
+                <input type="time" asp-for="PauseEnd2" class="form-control" value="@Model.PauseEnd2?.ToString("HH:mm")" />
+            </div>
+        </div>
+        <!-- Clocked Out -->
+        <div class="form-group row justify-content-center">
+            <div class="col-auto">
+                <label for="actualEnd">Uitgeklokt:</label>
+                <input type="time" id="actualEnd" asp-for="ActualEnd" class="form-control" />
+            </div>
+        </div>
+
+        <!-- Sick Switch -->
+        <div class="row justify-content-center mt-3">
+            <div class="col-auto">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" asp-for="IsSick" id="sickSwitch">
+                    <label class="form-check-label" for="sickSwitch">Ziek</label>
+                </div>
+            </div>
+        </div> 
+
+        <!-- Save Button -->
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        @if (TempData["ValidationError"] != null)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="alert alert-danger mt-3" style="max-width: fit-content; text-align: center;">
+                    @TempData["ValidationError"].ToString()
+                </div>
+            </div>
+        }
+    </form>
+</div>
+
+

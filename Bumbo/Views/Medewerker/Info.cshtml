@@ -1,0 +1,122 @@
+﻿@model Bumbo.ViewModels.MedewerkerInfoViewModel
+
+@{
+    ViewData["Title"] = "Info";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="text-center">
+    <h2>@Html.DisplayFor(model => model.Voornaam) @Html.DisplayFor(model => model.Tussenvoegsel) @Html.DisplayFor(model => model.Achternaam)</h2>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Index" method="get">
+            <button type="submit" class="btn btn-outline-primary btn-lg btn-block">Terug</button>
+        </form>
+    </div>
+</div>
+<br />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <table class="table align-middle ">
+                <tr>
+                    <th class="col-sm-6">@Html.DisplayNameFor(model => model.Filiaal)</th>
+                    <td class="col-sm-6">@Html.DisplayFor(model => model.Filiaal.Naam)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-3">@Html.DisplayNameFor(model => model.Afdelingen)</th>
+                    <td class="col-sm-3">
+                        @foreach (var afdeling in Model.Afdelingen)
+                        {
+                            <span>@afdeling.Naam</span> @:
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Functie)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Functie.Naam)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Schaal)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Functie.Schaal)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Indienst)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Indienst)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Email)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Email)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Telefoonnummer)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Telefoonnummer)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Plaats)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Plaats)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Straatnaam)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Straatnaam)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Postcode)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Postcode)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Huisnummer)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Huisnummer)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Geboortedatum)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Geboortedatum)</td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">@Html.DisplayNameFor(model => model.Leeftijd)</th>
+                    <td class="col-sm-10">@Html.DisplayFor(model => model.Leeftijd)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-sm-8 d-flex justify-content-center">
+        <div class="col-sm-2">
+            <form asp-action="MedewerkerUpdate" asp-route-id="@Model?.MedewerkerId" method="get">
+                <button type="submit" class="btn btn-outline-primary btn-block">Aanpassen</button>
+            </form>
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-outline-danger btn-block" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Verwijderen</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Prognose verwijderen</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Weet u zeker wat u de progose wil verwijderen?
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-lg btn-secondary" data-bs-dismiss="modal">Nee</button>
+                <form asp-action="MedewerkerDelete" asp-route-id="@Model?.MedewerkerId" method="get">
+                    <button type="submit" class="btn btn-danger btn-lg btn-block">Ja</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

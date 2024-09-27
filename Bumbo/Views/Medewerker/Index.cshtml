@@ -1,0 +1,101 @@
+﻿@model Bumbo.ViewModels.MedewerkerViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="text-center">Medewerkers - @Model.Afdeling</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+            <div class="alert alert-success alert-dismissible fade show fs-5 text-center shadow" role="alert">
+                @Html.Raw(TempData["Message"])
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="row">
+    <!-- Aanmaken Button -->
+    <div class="col-md-2">
+        <form asp-action="MedewerkerCreate" method="get">
+            <button type="submit" class="btn btn-primary">Aanmaken</button>
+        </form>
+    </div>
+
+    <!-- Right Aligned Form Section -->
+    <div class="col-md-10 d-flex justify-content-end align-items-center">
+        <!-- Filter Form -->
+        <div class="d-flex justify-content-end">
+            <form asp-action="Index" method="post">
+                <div class="form-group d-flex">
+                    <select asp-for="AfdelingId" class="form-control mr-2">
+                        @foreach (var afdeling in Model.Afdelingen)
+                        {
+                            <option value="@afdeling.AfdelingId">@afdeling.Naam</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-primary mr-2">Filteren</button>
+                </div>
+            </form>
+
+            <!-- Verwijder Filter Button -->
+            <form asp-action="Index" method="get">
+                <button type="submit" class="btn btn-dark">Verwijder filter</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Naam)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Functie)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Geboortedatum)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telefoonnummer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.medewerkers)
+        {
+            <tr class="align-middle">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Voornaam) @Html.DisplayFor(modelItem => item.Tussenvoegsel) @Html.DisplayFor(modelItem => item.Achternaam)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Functie.Naam)
+                </td>
+                <td>
+                    @item.Geboortedatum.ToShortDateString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telefoonnummer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    <form asp-action="Info" asp-route-id="@item.MedewerkerId" method="get">
+                        <button class="btn btn-outline-primary">Info</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

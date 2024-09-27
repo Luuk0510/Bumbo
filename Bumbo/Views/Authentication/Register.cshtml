@@ -1,0 +1,46 @@
+﻿@{
+    @model Bumbo.ViewModels.Account
+
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Bumbo - Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ninja_manager.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="container my-5">
+        <h1 class="display-4 text-center mb-4">Hallo Bumbo!</h1>
+        <h2 class="display-6 text-center mb-4">Vul hier uw de gegevens in voor een nieuwe gebruiker!</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <form method="post">
+                    <div class="form-group mb-4">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control" asp-for="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="form-label">Wachtwoord</label>
+                        <input type="password" class="form-control" asp-for="Wachtwoord" />
+                        <span asp-validation-for="Wachtwoord" class="text-danger"></span>
+                    </div>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <button type="submit" class="btn btn-primary">Aanmaken</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+

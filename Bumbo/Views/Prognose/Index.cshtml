@@ -1,0 +1,70 @@
+﻿@model Bumbo.ViewModels.PrognoseJaarViewModel
+
+@{
+    ViewData["Title"] = "Prognose";
+    int currentYear = DateTime.Now.Year;
+}
+
+@if (TempData["TempData"] != null)
+{
+    <div class="container w-50 mx-auto">
+        <div class="alert alert-info alert-dismissible fade show fs-5 text-center shadow" role="alert">
+            @Html.Raw(TempData["TempData"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<div class="row align-items-center">
+    <div class="col text-center">
+        <a class="btn btn-primary btn-lg" asp-area="" asp-controller="Prognose" asp-action="Index" asp-route-year="@(@Model.Year - 1)">Vorig jaar</a>
+    </div>
+    <div class="col text-center">
+        <h1>Prognose @Model.Year</h1>
+        @if (currentYear == Model.Year)
+        {
+            <h2>Huidig ​​weeknummer : @Model.CurrentWeek</h2>
+        }
+    </div>
+    <div class="col text-center">
+        <a class="btn btn-primary btn-lg" asp-area="" asp-controller="Prognose" asp-action="Index" asp-route-year="@(@Model.Year + 1)">Volgend jaar</a>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row row-cols-1 row-cols-md-6 g-6">
+        @foreach (var weekGroup in Model.MergedData)
+        {
+            string? style = null;
+            string action = "PrognoseCreateForm"; // Default action
+
+            if (weekGroup.Amount == Model.AmountAfdelingen * 7 && Model.AmountAfdelingen != 0)
+            {
+                style = "btn btn-success";
+                action = "PrognoseWeekOverview"; // Different action only for this condition
+            }
+            else if (weekGroup.WeekNumber == Model.CurrentWeek + 1 && Model.Year == currentYear)
+            {
+                style = "btn btn-warning";
+            }
+            else if (weekGroup.WeekNumber <= Model.CurrentWeek && Model.Year <= currentYear || Model.Year < currentYear)
+            {
+                style = "btn btn-danger";
+            }
+            else if (Model.Year > currentYear || Model.Year == currentYear)
+            {
+                style = "btn btn-light";
+            }
+
+            <div class="col p-2">
+                <div class="card">
+                    <a class="@style" asp-area="" asp-controller="Prognose" asp-action="@action" asp-route-weekNumber="@weekGroup.WeekNumber" asp-route-year="@Model.Year">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">Week @weekGroup.WeekNumber</h4>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

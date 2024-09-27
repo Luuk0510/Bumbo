@@ -1,0 +1,108 @@
+﻿@model Bumbo.ViewModels.MaandRegisterDataViewModel
+
+<div class="text-center">
+    <h4>Maandoverzicht uren van @Model.CurrentMonthName </h4>
+</div>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success w-50 mx-auto d-flex justify-content-between align-items-center" role="alert">
+        <span>@TempData["SuccessMessage"]</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+
+        <div class="col-3 d-flex justify-content-start">
+            <a class="btn btn-secondary" asp-controller="MaandUrenRegistratie" asp-action="Index" asp-route-year="@Model.Year">Terug</a>
+        </div>
+
+        <div class="col-6 d-flex justify-content-center">
+            <a href="@Model.PreviousMonthUrl" class="btn btn-outline-secondary me-2">Vorige maand</a>
+            <span>@Model.CurrentMonthName</span>
+            <a href="@Model.NextMonthUrl" class="btn btn-outline-secondary ms-2">Volgende maand</a>
+        </div>
+
+        <div class="col-3 d-flex justify-content-end">
+            <div class="navbar-nav">
+                <span class="nav-item nav-link">Afdeling:</span>
+                @foreach (var afdelingNaam in Model.AfdelingNamen)
+                {
+                    <form method="get" asp-controller="MaandUrenRegistratie" asp-action="Register">
+                        <input type="hidden" name="monthNumber" value="@Model.CurrentMonthNumber" />
+                        <input type="hidden" name="year" value="@Model.Year" />
+                        <button class="btn mx-1 @(afdelingNaam == Context.Request.Query["selectedAfdeling"] ? "btn-primary active" : "btn-light")" type="submit" name="selectedAfdeling" value="@afdelingNaam">@afdelingNaam</button>
+                    </form>
+                }
+            </div>
+
+            <div class="navbar-nav ms-3">
+                <form method="get" asp-controller="MaandUrenRegistratie" asp-action="Register">
+                    <input type="hidden" name="monthNumber" value="@Model.CurrentMonthNumber" />
+                    <input type="hidden" name="year" value="@Model.Year" />
+                    <input type="hidden" name="selectedAfdeling" value="@Model.CurrentAfdeling" />
+                    <input type="hidden" name="message" value="true" />
+                    <button class="btn btn-outline-light border-dark text-dark" type="submit">Versturen</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered text-lg">
+
+                <thead class="thead-dark">
+                    <tr>
+                        <th>BID</th>
+                        <th>Naam</th>
+                        <th>Functie</th>
+                        <th>Totale Uren</th>
+                        <th>0%</th>
+                        <th>33.33%</th>
+                        <th>50%</th>
+                        <th>70%</th>
+                        <th class="border-end-0">100%</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.maandRegisterViewModels != null && Model.maandRegisterViewModels.Any())
+                    {
+                        foreach (var dienst in Model.maandRegisterViewModels)
+                        {
+                            <tr>
+                                <td>@dienst.Medewerker.MedewerkerId</td>
+                                <td>@dienst.Medewerker.Voornaam @dienst.Medewerker.Tussenvoegsel @dienst.Medewerker.Achternaam</td>
+                                <td>@dienst.Medewerker.Functie.Naam</td>
+                                <td>@dienst.TotaalUren</td>
+                                <td>@dienst.ToeslagUur0</td>
+                                <td>@dienst.ToeslagUur33</td>
+                                <td>@dienst.ToeslagUur50</td>
+                                <td>@dienst.ToeslagUur70</td>
+                                <td class="border-end-0">
+                                    @dienst.ToeslagUur100
+                                    <div class="float-end">
+                                        <form method="get" asp-controller="MaandUrenRegistratie" asp-action="MedewerkerRegister">
+                                            <input type="hidden" name="currentYear" value="@Model.Year" />
+                                            <input type="hidden" name="currentMonthNumber" value="@Model.CurrentMonthNumber" />
+                                            <input type="hidden" name="medewerkerId" value="@dienst.Medewerker.MedewerkerId" />
+                                            <input type="hidden" name="afdeling" value="@Model.CurrentAfdeling" />
+                                            <button class=" btn btn-sm btn-outline-dark border border-dark me-2" type="submit">Meer Info</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+

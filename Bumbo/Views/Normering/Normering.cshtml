@@ -1,0 +1,75 @@
+﻿@model NormeringenViewModel
+
+@{
+    ViewData["Title"] = "Normeringen";
+}
+
+<div class="container">
+    <h1 class="text-center">Huidige Normering</h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Activiteit Naam</th>
+            <th>Eenheid</th>
+            <th>Duur</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var normering in Model.NormeringenList)
+        {
+            <tr>
+                <td>
+                    @foreach (var activiteit in normering.Activiteitens)
+                    {
+                        @activiteit.Naam
+
+                        <br>
+                    }
+                </td>
+                <td>@normering.Eenheid</td>
+                <td>@normering.Duur</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+            <form method="post" asp-controller="Normering" asp-action="LoadFile" enctype="multipart/form-data">
+                <input type="file" name="fileInput" id="fileInput" accept=".xlsx" />
+                <button type="submit" class="btn btn-primary">Load File</button>
+            </form>
+            @if (Model.NormeringenList != null && Model.NormeringenList.Count > 0)
+            {
+                <button type="submit" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Delete Normering
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Normeringen verwijderen</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Weet u zeker wat u de normeringen wil verwijderen?
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-lg btn-secondary me-2" data-bs-dismiss="modal">Nee</button>
+                <form method="post" asp-controller="Normering" asp-action="DeleteNormering" asp-route-uploadDatum="@Model.NormeringenList[0].UploadDatum" class="d-inline-block">
+                    <button type="submit" class="btn btn-lg btn-danger">
+                        Ja
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+﻿@{
+    Layout = "_MedewerkerLayout";
+}
+
+@model Bumbo.ViewModels.MedewerkerDiensten;
+@using System.Globalization
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div style="text-align: center;">
+        <form asp-area="" asp-controller="MedewerkerController" asp-action="Switch" method="get">
+            <a href="@Url.Action("Index", "Diensten")" class="btn btn-outline-dark">Toon alle diensten</a>
+        </form>
+
+        @foreach (var group in Model.Diensten.GroupBy(d => new { Week = GetWeekNumber(d.Dienst.Datum) }))
+        {
+            <div style="padding-top: 20px; margin: auto; width: 80%;">
+                <p>Week @group.Key.Week</p>
+
+                @foreach (var dayGroup in group.GroupBy(d => d.Dienst.Datum.Date))
+                {
+                    <div style="margin-bottom: 20px;">
+                        @foreach (var dienstViewModel in dayGroup)
+                        {
+                            <div style="border: 1px solid #ccc; background-color: #ccc; padding: 5px; text-align: left; margin-bottom: 10px;">
+                                @* <p style="margin: 0; display: inline-block; width: 100px;">@(dayGroup.Key.ToString("dddd", CultureInfo.CurrentCulture))</p> *@
+                                <p style="margin: 0;">@(dayGroup.Key.ToString("dddd", CultureInfo.CurrentCulture))  @(dayGroup.Key.ToString("dd MMM"))</p>
+                                <p style="margin: 0;">@(dienstViewModel.Dienst.StartTijd.ToString("hh\\:mm") + " - " + dienstViewModel.Dienst.EindTijd.ToString("hh\\:mm") + " | " + dienstViewModel.FunctieNaam)</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @functions
+    {
+        public int GetWeekNumber(DateTime date)
+        {
+            CultureInfo ciCurr = CultureInfo.CurrentCulture;
+            int weekNum = ciCurr.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+            return weekNum;
+        }
+    }
+</body>
+</html>

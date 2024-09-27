@@ -1,0 +1,29 @@
+﻿@model List<Bumbo.ViewModels.FiliaalDistanceViewModel>
+
+<div class="container">
+    <h1 class="text-center">Filialen in de buurt</h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Filiaal naam</th>
+            <th>Plaats</th>
+            <th>Telefoonnummer</th>
+            <th>Email</th>
+            <th>Afstand</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var filiaal in Model)
+        {
+            <tr>
+                <td>@filiaal.Filiaal.Naam</td>
+                <td>@filiaal.Filiaal.Plaats</td>
+                <td>@filiaal.Filiaal.Telefoonnummer</td>
+                <td>@filiaal.Filiaal.Email</td>
+                <td>@(filiaal.Distance >= 0 ? filiaal.Distance.ToString("0.00") + " km" : "Onbekend")</td>
+            </tr>
+        }
+    </tbody>
+</table>

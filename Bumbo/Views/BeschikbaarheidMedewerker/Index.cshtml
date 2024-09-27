@@ -1,0 +1,104 @@
+﻿@model Bumbo.ViewModels.BeschikbaarheidOverviewViewModel
+
+@{
+    Layout = "_MedewerkerLayout";
+    ViewData["Title"] = "Beschikbaarheid";
+    string? message = TempData["Message"] as string;
+}
+
+<h1 class="text-center">Huidige beschikbaarheid</h1>
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-success alert-dismissible fade show fs-5 text-center shadow" role="alert">
+        @Html.Raw(message)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<nav aria-label="Week navigation">
+    <ul class="pagination justify-content-center mb-4">
+        <li class="page-item">
+            @{
+                int previousWeek = Model.WeekNumber - 1;
+                int previousYear = Model.Year;
+                if (previousWeek <= 0)
+                {
+                    previousWeek = 52;
+                    previousYear--;
+                }
+            }
+            <a href="@Url.Action("Index", "BeschikbaarheidMedewerker", new { year = previousYear, weekNumber = previousWeek })" class="page-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                </svg>
+            </a>
+        </li>
+
+        <li class="page-item">
+            <span class="page-link">Week @Model.WeekNumber</span>
+        </li>
+        <li class="page-item">
+            @{
+                int nextWeek = Model.WeekNumber + 1;
+                int nextYear = Model.Year;
+                if (nextWeek >= 53)
+                {
+                    nextWeek = 1;
+                    nextYear++;
+                }
+            }
+            <a href="@Url.Action("Index", "BeschikbaarheidMedewerker", new { year = nextYear, weekNumber = nextWeek })" class="page-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                </svg>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<table class="table table-responsive-sm table-bordered table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>Dag</th>
+            <th>School uren</th>
+            <th>Tijdsblok 1</th>
+            <th>Tijdsblok 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var daySchedule in Model.BeschikbaarheidList)
+        {
+            <tr>
+                <td>@daySchedule.Key.ToString("dddd")</td>
+                @{
+                    int? schoolUrenNullable = daySchedule.Value.FirstOrDefault()?.SchoolUren;
+                    int schoolUren = schoolUrenNullable ?? 0;
+                }
+                <td>@schoolUren</td>
+                @{
+                    for (int i = 0; i < 2; i++)
+                    {
+                        var tijdvak = daySchedule.Value.ElementAtOrDefault(i);
+                        <td>
+                            <span>@tijdvak.StartTijd.ToString(@"hh\:mm") - @tijdvak.EindTijd.ToString(@"hh\:mm")</span>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="text-center mt-4">
+    @if (Model.IsDienst)
+    {
+        <button class="btn btn-lg btn-primary" disabled>Aanpassen</button>
+    }
+    else if (Model.IsUsed)
+    {
+        <a class="btn btn-lg btn-primary" asp-controller="BeschikbaarheidMedewerker" asp-action="BeschikbaarheidChange" asp-route-year="@Model.Year" asp-route-weekNumber="@Model.WeekNumber">Aanpassen</a>
+    }
+    else
+    {
+        <a class="btn btn-lg btn-primary" asp-controller="BeschikbaarheidMedewerker" asp-action="BeschikbaarheidCreate" asp-route-year="@Model.Year" asp-route-weekNumber="@Model.WeekNumber">Aanpassen</a>
+    }
+</div>

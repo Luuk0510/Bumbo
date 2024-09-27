@@ -1,0 +1,146 @@
+﻿@using System.Globalization
+
+@model Bumbo.ViewModels.BeschikbaarheidWeekViewModel
+
+@{
+    ViewData["Title"] = "Beschikbaarheid Aanpassen";
+    Layout = "_MedewerkerLayout";
+    int index = 0;
+    int indexCopy = 0;
+
+    string? incorrectInput = TempData["IncorrectInput"] as string;
+}
+
+<div class="mobile">
+    <div class="d-flex justify-content-start pb-2">
+        <a class="btn btn-lg btn-outline-secondary" asp-controller="BeschikbaarheidMedewerker" asp-action="index" asp-route-year="@Model.Year" asp-route-weekNumber="@Model.WeekNumber">Terug</a>
+    </div>
+    <div class="text-center pb-1">
+        <h1>Beschikbaarheid aanpassen</h1>
+    </div>
+    <div class="text-center pb-4">
+        <h1>Week: @Model.WeekNumber</h1>
+    </div>
+    <div class="text-center pb-3">
+        @if (!string.IsNullOrEmpty(incorrectInput))
+        {
+            <div class="alert alert-danger alert-dismissible fade show fs-5 text-center shadow" role="alert">
+                @Html.Raw(incorrectInput)
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (Model.BeschikbaarheidOptions != null && Model.BeschikbaarheidOptions.Count > 0)
+        {
+            <button class="btn btn-lg btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false">
+                Kopieer week beschikbaarheid
+            </button>
+            <div class="collapse pt-2" id="collapseWidthExample">
+                <div class="card card-body form-group">
+                    <form action="BeschikbaarheidCopy" method="post">
+                        <input type="hidden" asp-for="Year" />
+                        <input type="hidden" asp-for="WeekNumber" />
+                        <input type="hidden" asp-for="MedewerkerId" />
+                        @for (int i = 0; i < 7; i++)
+                        {
+                            @for (int j = 0; j < 2; j++)
+                            {
+                                <input type="hidden" asp-for="BeschikbaarheidList[indexCopy].BeschikbaarheidId" />
+                                <input type="hidden" asp-for="BeschikbaarheidList[indexCopy].Datum" />
+                                <input type="hidden" asp-for="BeschikbaarheidList[indexCopy].StartTijd" />
+                                <input type="hidden" asp-for="BeschikbaarheidList[indexCopy].EindTijd" />
+                                @if (j == 0)
+                                {
+                                    <input type="hidden" asp-for="BeschikbaarheidList[indexCopy].SchoolUren" />
+                                }
+                                indexCopy++;
+                            }
+                        }
+                        <label>Kies een week</label>
+                        <select asp-for="CopyWeekNumber" class="form-control">
+                            @foreach (var item in Model.BeschikbaarheidOptions)
+                            {
+                                <option value=@item>Week: @item</option>
+                            }
+                        </select>
+                        <div class="pt-2">
+                            <input type="submit" value="Kopiëren" class="btn btn-lg btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Year" />
+        <input type="hidden" asp-for="WeekNumber" />
+        <input type="hidden" asp-for="MedewerkerId" />
+
+        @for (int i = 0; i < 7; i++)
+        {
+            <p>@Model.BeschikbaarheidList[index].Datum.ToString("dddd d-M", CultureInfo.CreateSpecificCulture("nl-NL"))</p>
+            <div class="form-group" id="timePickers">
+                @for (int j = 0; j < 2; j++)
+                {
+                    <input type="hidden" asp-for="BeschikbaarheidList[index].BeschikbaarheidId">
+                    <input type="hidden" asp-for="BeschikbaarheidList[index].Datum" />
+                    <div class="row centered-row">
+                        <div class="col-md-2 col-12 pb-3 time-picker">
+                            @if (j == 0)
+                            {
+                                <label>1st Begin Tijd</label>
+                            }
+                            else
+                            {
+                                <label>2de Begin Tijd</label>
+                            }
+                            <select asp-for="BeschikbaarheidList[index].StartTijd" class="form-control time-select">
+                                @foreach (var time in Model.TimeOptions)
+                                {
+                                    <option value=@time>@time</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 col-12 pb-3 time-picker">
+                            @if (j == 0)
+                            {
+                                <label>1st Eind Tijd</label>
+                            }
+                            else
+                            {
+                                <label>2de Eind Tijd</label>
+                            }
+
+                            <select asp-for="BeschikbaarheidList[index].EindTijd" class="form-control time-select">
+                                @foreach (var time in Model.TimeOptions)
+                                {
+                                    <option value=@time>@time</option>
+                                }
+                            </select>
+                        </div>
+
+                        @if (j == 0)
+                        {
+                            <div class="col-md-2 col-12 pb-3 school-picker">
+                                <label>School Uren:</label>
+                                <select asp-for="BeschikbaarheidList[index].SchoolUren" class="form-control form-select">
+                                    @for (int k = 0; k < 9; k++)
+                                    {
+                                        <option value=@k>@k</option>
+                                    }
+                                </select>
+                            </div>
+                        }
+                    </div>
+                    index++;
+                }
+            </div>
+
+            <hr />
+        }
+        <div class="form-group col-md-12 pt-2 d-flex justify-content-center">
+            <input type="submit" value="Opgeven" class="btn btn-lg btn-primary" />
+        </div>
+    </form>
+</div>

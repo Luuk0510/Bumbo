@@ -1,0 +1,107 @@
+﻿@model Bumbo.ViewModels.MedewerkerRegisterViewModel
+
+<div class="text-center">
+    <h4>@Model.CurrentMonthName</h4>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+
+    <div class="col-3 d-flex justify-content-start">
+        <a class="btn btn-secondary" asp-controller="MaandUrenRegistratie" asp-action="Register" asp-route-year="@Model.Year"
+           asp-route-monthNumber="@Model.CurrentMonthNumber" asp-route-selectedAfdeling="@Model.CurrentAfdeling">Terug</a>
+    </div>
+
+    <div class="col-6 d-flex justify-content-center text-center">
+        <form method="post" asp-controller="MaandUrenRegistratie" asp-action="MaandSwitch">
+            <input type="hidden" name="currentMonthNumber" value="@Model.CurrentMonthNumber" />
+            <input type="hidden" name="currentYear" value="@Model.Year" />
+            <input type="hidden" name="change" value="false" />
+            <input type="hidden" name="afdeling" value="@Model.CurrentAfdeling" />
+            <input type="hidden" name="medewerkerId" value="@Model.Medewerker.MedewerkerId" />
+            <button type="submit" class="btn btn-outline-secondary me-2">Vorige maand</button>
+        </form>
+
+        <span>@Model.Medewerker.Voornaam @Model.Medewerker.Tussenvoegsel @Model.Medewerker.Achternaam </span>
+
+        <form method="post" asp-controller="MaandUrenRegistratie" asp-action="MaandSwitch">
+            <input type="hidden" name="currentMonthNumber" value="@Model.CurrentMonthNumber" />
+            <input type="hidden" name="change" value="true" />
+            <input type="hidden" name="currentYear" value="@Model.Year" />
+            <input type="hidden" name="afdeling" value="@Model.CurrentAfdeling" />
+            <input type="hidden" name="medewerkerId" value="@Model.Medewerker.MedewerkerId" />
+            <button type="submit" class="btn btn-outline-secondary me-2">Volgende maand</button>
+        </form>
+
+    </div>
+
+</nav>
+
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-bordered text-lg">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Datum</th>
+                        <th>Afdeling</th>
+                        <th>Gepland</th>
+                        <th>Geklokt</th>
+                        <th>Pauze</th>
+                        <th>0%</th>
+                        <th>33.33%</th>
+                        <th>50%</th>
+                        <th>70%</th>
+                        <th class="border-end-0">100%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (@Model.Rijen != null && Model.Rijen.Any())
+                    {
+                        @foreach (var rij in Model.Rijen)
+                        {
+                            <tr>
+                                <td>@rij.Datum</td>
+                                <td>@rij.Afdeling</td>
+                                <td>@rij.Gepland</td>
+                                <td class="@(rij.IsApproved ? " text-black" : (rij.HasDeviation ? "text-danger" : "" ))">@rij.Geklokt</td>
+                                <td>@rij.Pauze</td>
+                                <td>@rij.Toeslag_0</td>
+                                <td>@rij.Toeslag_33</td>
+                                <td>@rij.Toeslag_50</td>
+                                <td>@rij.Toeslag_70</td>
+                                <td class="border-end-0">
+                                    @rij.Toeslag_100
+                                    <div class="float-end">
+                                        <div class="row g-0">
+                                            <div class="col">
+                                                <form method="post" class="d-inline" asp-controller="MaandUrenRegistratie" asp-action="ToggleApproval"
+                                                      asp-route-dienstId="@rij.DienstId"
+                                                      asp-route-currentYear="@Model.Year"
+                                                      asp-route-currentMonthNumber="@Model.CurrentMonthNumber"
+                                                      asp-route-afdeling="@Model.CurrentAfdeling"
+                                                      asp-route-medewerkerId="@Model.Medewerker.MedewerkerId">
+                                                    <button type="submit" class="btn btn-sm me-1 @(rij.IsApproved ? "btn-success" : "btn-outline-success")">
+                                                        <i class="bi bi-check2 fs-9"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            <div class="col">
+                                                <a @* asp-controller="WeekUrenRegistratie" asp-action="RegisterChange"
+                                                   - asp-route-dienstId="@rij.DienstId" asp-route-week="@Model.WeekNumber"
+                                                   asp-route-year="@Model.Year" *@
+                                                   class="btn btn-sm btn-outline-dark border border-dark">
+                                                    Aanpassen
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

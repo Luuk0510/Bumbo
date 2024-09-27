@@ -1,0 +1,111 @@
+﻿@using System.Globalization
+@{
+    Layout = "_MedewerkerLayout";
+    var weekSchedule = ViewData["WeekSchedule"] as Dictionary<DateTime, List<Diensten>>;
+    int medewerkerId = ViewData["MedewerkerId"] as int? ?? 1;
+    int weekOffset = ViewData["WeekOffset"] as int? ?? 0;
+
+    DateTime firstDayOfWeek = DateTime.Today.AddDays(weekOffset * 7 - (int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+
+    var dfi = DateTimeFormatInfo.CurrentInfo;
+    var calendar = dfi.Calendar;
+    int weekNum = calendar.GetWeekOfYear(firstDayOfWeek, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+
+    var sortedWeekSchedule = weekSchedule.OrderBy(x => ((int)x.Key.DayOfWeek + 6) % 7).ToDictionary(x => x.Key, x => x.Value);
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="text-center mb-4">
+                <a href="@Url.Action("Index", "RoosterMedewerker")" class="btn btn-outline-dark">Toon eigen diensten</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="Week navigation">
+    <ul class="pagination justify-content-center mb-4">
+        <li class="page-item">
+            <a href="@Url.Action("Index", "Diensten", new { medewerkerId, weekOffset = weekOffset - 1 })" class="page-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                </svg>
+            </a>
+        </li>
+        <li class="page-item">
+            <span class="page-link">Week @weekNum</span>
+        </li>
+        <li class="page-item">
+            <a href="@Url.Action("Index", "Diensten", new { medewerkerId, weekOffset = weekOffset + 1 })" class="page-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                </svg>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            @if (weekSchedule != null && weekSchedule.Any())
+            {
+                @foreach (var daySchedule in sortedWeekSchedule)
+                {
+                    <div class="bg-light p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>@daySchedule.Key.ToString("dddd dd-MM-yyyy")</div>
+                            <button class="dropdown-button btn btn-sm btn-primary" type="button" onclick="toggleDiensten(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill icon-closed" viewBox="0 0 16 16">
+                                    <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill icon-open" viewBox="0 0 16 16" style="display: none;">
+                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="diensten" style="display:none;">
+                            <table class="table table-striped mt-3">
+                                <tbody>
+                                    @foreach (var dienst in daySchedule.Value)
+                                    {
+                                        <tr>
+                                            <td>@dienst.Medewerker?.Voornaam</td>
+                                            <td>@(dienst.Medewerker?.Functie?.Naam ?? "Functie niet gevonden")</td>
+                                            <td>@dienst.StartTijd.ToString("hh\\:mm")</td>
+                                            <td>@dienst.EindTijd.ToString("hh\\:mm")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Geen gegevens beschikbaar voor deze week.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDiensten(button) {
+        var dienstenDiv = button.parentElement.nextElementSibling;
+
+        if (dienstenDiv.style.display === 'none') {
+            dienstenDiv.style.display = 'block';
+            button.querySelector('.icon-closed').style.display = 'none';
+            button.querySelector('.icon-open').style.display = 'inline';
+        } else {
+            dienstenDiv.style.display = 'none';
+            button.querySelector('.icon-closed').style.display = 'inline';
+            button.querySelector('.icon-open').style.display = 'none';
+        }
+    }
+</script>
+

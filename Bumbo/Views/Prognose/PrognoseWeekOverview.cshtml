@@ -1,0 +1,66 @@
+﻿@model Bumbo.ViewModels.PrognoseWeekOverviewViewModel
+
+@{
+    ViewData["Title"] = "Prognose Week Overview";
+}
+
+<h1 class="text-center">@ViewData["Title"] @Model.Year</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Datum</th>
+            @foreach (var afdeling in Model.Afdelingen)
+            {
+                <th>@afdeling</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Dagen.Count; i++)
+        {
+            <tr>
+                <td>@Model.Dagen[i].ToShortDateString()</td>
+                @foreach (var afdelingUren in Model.Uren[i])
+                {
+                    <td>@afdelingUren</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-center">
+    <a asp-action="PrognoseUpdateForm" asp-route-weekNumber="@ViewContext.HttpContext.Request.Query["weekNumber"]" asp-route-year="@Model.Year" class="btn btn-outline-primary me-2">Prognose aanpassen</a>
+    <button type="submit" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Prognose verwijderen
+    </button>
+</div>
+
+<div class="pt-4">
+    <a class="btn btn-outline-primary btn-sm" asp-action="Index" asp-route-year="@Model.Year">Ga terug</a>
+</div>
+
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Prognose verwijderen</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Weet u zeker wat u de progose wil verwijderen?
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nee</button>
+                <form method="post" asp-action="DeletePrognose" asp-route-weekNumber="@ViewContext.HttpContext.Request.Query["weekNumber"]" asp-route-year="@Model.Year">
+                    <button type="submit" class="btn btn-danger">
+                        Ja
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

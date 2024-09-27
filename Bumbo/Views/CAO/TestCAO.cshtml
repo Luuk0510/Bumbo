@@ -1,0 +1,73 @@
+﻿@model Bumbo.ViewModels.TestCAOCheckViewModel
+
+<h2>Test CAO Check</h2>
+
+<!-- Display all workers and their beschikbaarheid in a table -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Medewerker</th>
+            <th>Beschikbaarheid</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Medewerkers != null)
+        {
+            @foreach (var medewerker in Model.Medewerkers)
+            {
+                <tr>
+                    <td>@medewerker.Voornaam</td>
+                    <td>
+                        @if (medewerker.Beschikbaarheids != null && medewerker.Beschikbaarheids.Any())
+                        {
+                            foreach (var beschikbaarheid in medewerker.Beschikbaarheids)
+                            {
+                                <p>@beschikbaarheid.Datum.ToShortDateString() - @beschikbaarheid.StartTijd.ToString("hh\\:mm") tot @beschikbaarheid.EindTijd.ToString("hh\\:mm")</p>
+                            }
+                        }
+                        else
+                        {
+                            <p>No beschikbaarheid</p>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="AddToIngepland" method="post">
+                            <input type="hidden" name="SelectedMedewerkerId" value="@medewerker.MedewerkerId" />
+                            <input type="hidden" name="SelectedBeschikbaarheidId" value="@medewerker.Beschikbaarheids.FirstOrDefault()?.BeschikbaarheidId" />
+                            <button type="submit">Add to Ingepland</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">No Medewerkers available</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Display the CAO Check results if available -->
+@if (Model.CAOCheckResult != null)
+{
+    <div>
+        <p>Resultaten:</p>
+
+        <!-- Display pills based on CAO check results for each age group -->
+        @if (Model.CAOCheckResult.Exceeds12HoursSchoolWeek || Model.CAOCheckResult.TooManyHoursWithSchool)
+        {
+            <span class="badge bg-warning">Minderjarigen &lt; 16: Te veel uren school</span>
+        }
+
+        @if (Model.CAOCheckResult.WorksAfter19)
+        {
+            <span class="badge bg-warning">Minderjarigen &lt; 16: Werkt na 19:00</span>
+        }
+
+        <!-- Add similar checks and messages for other CAO rules -->
+
+    </div>
+}

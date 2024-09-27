@@ -1,0 +1,59 @@
+﻿@{
+    @model Bumbo.ViewModels.Account
+
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Bumbo - Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ninja_manager.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="container my-5">
+        <h1 class="display-4 text-center mb-4">Hallo Bumbo!</h1>
+        <h2 class="display-6 text-center mb-4">Vul hier uw inloggegevens in.</h2>
+        <div class="mobile row">
+            <div class="col-md-12 d-flex align-items-center justify-content-center">
+                <form method="POST">
+                    <div class="form-group mb-4">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control form-control-lg" asp-for="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="form-label">Wachtwoord</label>
+                        <input type="password" class="form-control form-control-lg" asp-for="Wachtwoord" />
+                        <span asp-validation-for="Wachtwoord" class="text-danger"></span>
+                    </div>
+                    <div class="mb-4 d-flex justify-content-center">
+                        <input type="submit" class="btn btn-lg btn-primary" value="Inloggen" />
+                    </div>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    @*<div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    <input type="checkbox" class="btn-check" id="btncheck1" asp-for="RememberMe" autocomplete="off">
+                    <label class="btn btn-outline-primary btn-sm" for="btncheck1">Onthoud mij</label>
+                    </div>*@
+                </form>
+                @*if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        Registratie succesvol! U kunt nu inloggen.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }*@
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+

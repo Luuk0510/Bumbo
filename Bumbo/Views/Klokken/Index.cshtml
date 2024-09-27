@@ -1,0 +1,71 @@
+﻿@model Bumbo.ViewModels.InklokkenViewModel
+
+@{
+    ViewData["Title"] = "Klokken";
+    Layout = "_MedewerkerLayout";
+}
+<div class="container text-center mt-5">
+    <h1 class="fw-bold fs-1">Klokken</h1>
+
+    <h2>@Model.DateTime.ToString("dddd-dd-MM")</h2>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show fs-5 text-center shadow mt-3" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <form asp-controller="Klokken" asp-action="HandleInklokken" method="POST" class="mb-4">
+        <div class="d-flex flex-column align-items-center">
+            <button type="submit" id="inklokkenButton" class="btn btn-primary btn-lg mb-3" @(Model.IsKlokt ? "disabled" : "")>
+                Inklokken
+                @if (Model.IsKlokt)
+                {
+                    <span class="bi bi-lock"></span>
+                }
+            </button>
+        </div>
+    </form>
+
+    <form asp-controller="Klokken" asp-action="HandleUitklokken" method="POST">
+        <button type="submit" id="uitklokkenButton" class="btn btn-danger btn-lg" @(Model.IsKlokt ? "" : "disabled")>
+            Uitklokken
+            @if (!Model.IsKlokt)
+            {
+                <span class="bi bi-lock"></span>
+            }
+        </button>
+    </form>
+    <div class="d-flex flex-column align-items-center">
+        @if (Model.IsKlokt)
+        {
+            <div class="alert alert-success alert-dismissible fade show fs-5 text-center shadow mt-3" role="alert">
+                @Model.TimerMessage
+                <p>Ingeklokt op: @Model.ClockedIn.ToString("HH\\:mm")</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        else if (Model.ClockedOut != DateTime.MinValue)
+        {
+            <div class="alert alert-success alert-dismissible fade show fs-5 text-center shadow mt-3" role="alert">
+                @Model.TimerMessage
+                <p>Uitgeklokt op: @Model.ClockedOut.ToString("HH\\:mm")</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        else if (!Model.IsKlokt && !string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger mt-2">
+                @Model.ErrorMessage
+            </div>
+        }
+    </div>
+</div>

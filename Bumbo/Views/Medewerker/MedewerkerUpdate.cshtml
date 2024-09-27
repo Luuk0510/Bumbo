@@ -1,0 +1,98 @@
+﻿@model Bumbo.ViewModels.MedewerkerFormViewModel
+
+@{
+    ViewData["Title"] = "MedewerkerUpdate";
+}
+
+
+<div class="container">
+    <h1 class="text-center">Medewerker aanpassen</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Index" method="get">
+                <button type="submit" class="btn btn-outline-primary">Terug</button>
+            </form>
+        </div>
+    </div>
+    <hr />
+    <form asp-action="MedewerkerUpdate" method="post">
+        <input type="hidden" asp-for="MedewerkerId" />
+        <div class="row justify-content-center w-75 mx-auto">
+            <div class="col-md-6 pb-5">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Functie" class="control-label"></label>
+                    <select asp-for="FunctieId" class="form-control">
+                        @foreach (var functie in Model.Functies)
+                        {
+                            <option value="@functie.FunctieId">@functie.Naam</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Voornaam" class="control-label"></label>
+                    <input asp-for="Voornaam" class="form-control" />
+                    <span asp-validation-for="Voornaam" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Tussenvoegsel" class="control-label"></label>
+                    <input asp-for="Tussenvoegsel" class="form-control" />
+                    <span asp-validation-for="Tussenvoegsel" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Achternaam" class="control-label"></label>
+                    <input asp-for="Achternaam" class="form-control" />
+                    <span asp-validation-for="Achternaam" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Geboortedatum" class="control-label"></label>
+                    <input asp-for="Geboortedatum" class="form-control" />
+                    <span asp-validation-for="Geboortedatum" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Indienst" class="control-label"></label>
+                    <input asp-for="Indienst" class="form-control" />
+                    <span asp-validation-for="Indienst" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Telefoonnummer" class="control-label"></label>
+                    <input asp-for="Telefoonnummer" class="form-control" />
+                    <span asp-validation-for="Telefoonnummer" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Postcode" class="control-label"></label>
+                    <input asp-for="Postcode" class="form-control" />
+                    <span asp-validation-for="Postcode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Huisnummer" class="control-label"></label>
+                    <input asp-for="Huisnummer" class="form-control" />
+                    <span asp-validation-for="Huisnummer" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Straatnaam" class="control-label"></label>
+                    <input asp-for="Straatnaam" class="form-control" />
+                    <span asp-validation-for="Straatnaam" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Plaats" class="control-label"></label>
+                    <input asp-for="Plaats" class="form-control" />
+                    <span asp-validation-for="Plaats" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
